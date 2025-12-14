@@ -1,0 +1,9 @@
+// For image name reference
+
+Frame_color1.png / Frame_color2.png
+Handle_color1.png / Handle_color2.png
+Front Wheel_color1.png / Front Wheel_color2.png
+Back Wheel_color1.png / Back Wheel_color2.png
+Cargo Box_color1.png / Cargo Box_color2.png
+Seat_color1.png / Seat_color2.png
+Pedal_color1.png / Pedal_color2.png

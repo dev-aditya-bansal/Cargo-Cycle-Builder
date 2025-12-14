@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cargo Cycle Builder</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🚲 Cargo Cycle Builder</h1>
+        
+        <div class="builder-wrapper">
+            <div class="preview-area">
+                <div class="placeholder-text">Select parts from the menu to build your cargo cycle</div>
+                <div class="loading-spinner"></div>
+                
+                <!-- Fixed aspect ratio container that scales proportionally -->
+                <div class="bike-container">
+                    <!-- Part images will be dynamically inserted here -->
+                    <img id="frame" class="part-image" style="display: none;" alt="Frame">
+                    <img id="cargoBox" class="part-image" style="display: none;" alt="Cargo Box">
+                    <img id="frontWheel" class="part-image" style="display: none;" alt="Front Wheel">
+                    <img id="backWheel" class="part-image" style="display: none;" alt="Back Wheel">
+                    <img id="handle" class="part-image" style="display: none;" alt="Handle">
+                    <img id="seat" class="part-image" style="display: none;" alt="Seat">
+                    <img id="pedal" class="part-image" style="display: none;" alt="Pedal">
+                </div>
+            </div>
+
+            <div class="controls-panel">
+                <div class="control-group">
+                    <label for="frameColor">Frame</label>
+                    <select id="frameColor" onchange="updatePart('frame', this.value)">
+                        <option value="">Select Color</option>
+                        <option value="color1">Color 1</option>
+                        <option value="color2">Color 2</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="handleColor">Handle</label>
+                    <select id="handleColor" onchange="updatePart('handle', this.value)">
+                        <option value="">Select Color</option>
+                        <option value="color1">Color 1</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="frontWheelColor">Front Wheel</label>
+                    <select id="frontWheelColor" onchange="updatePart('frontWheel', this.value)">
+                        <option value="">Select Color</option>
+                        <option value="color1">Color 1</option>
+                        <option value="color2">Color 2</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="backWheelColor">Back Wheel</label>
+                    <select id="backWheelColor" onchange="updatePart('backWheel', this.value)">
+                        <option value="">Select Color</option>
+                        <option value="color1">Color 1</option>
+                        <option value="color2">Color 2</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="cargoBoxColor">Cargo Box</label>
+                    <select id="cargoBoxColor" onchange="updatePart('cargoBox', this.value)">
+                        <option value="">Select Color</option>
+                        <option value="color1">Color 1</option>
+                        <option value="color2">Color 2</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="seatColor">Seat</label>
+                    <select id="seatColor" onchange="updatePart('seat', this.value)">
+                        <option value="">Select Color</option>
+                        <option value="color1">Color 1</option>
+                        <option value="color2">Color 2</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="pedalColor">Pedal</label>
+                    <select id="pedalColor" onchange="updatePart('pedal', this.value)">
+                        <option value="">Select Color</option>
+                        <option value="color1">Color 1</option>
+                        <option value="color2">Color 2</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
