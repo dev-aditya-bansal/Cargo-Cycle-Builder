@@ -6,7 +6,7 @@ const partNames = {
     'backWheel': 'Wheel',   // Use same wheel image for back
     'cargoBox': 'Cargo Box',
     'seat': 'Seat',
-    'pedal': 'Pedal'
+    'pedal': 'pedal'  // Lowercase to match file names (pedal1.png, pedal2.png)
 };
 
 // Part display names for notifications
@@ -50,13 +50,13 @@ function updatePart(partId, color) {
         return;
     }
 
-    // Construct image path: images/partname_color.png or .jpeg
-    // Example: images/Frame_color1.png, images/Wheel_color1.jpeg
+    // Construct image path: images/partnamenumber.png or .jpeg
+    // Example: images/Frame1.png, images/Wheel1.png (no underscore)
     const partName = partNames[partId];
     
     // Try .png first, then .jpeg if .png fails
-    const imagePathPng = `images/${partName}_${color}.png`;
-    const imagePathJpeg = `images/${partName}_${color}.jpeg`;
+    const imagePathPng = `images/${partName}${color}.png`;
+    const imagePathJpeg = `images/${partName}${color}.jpeg`;
     
     // Show loading state
     imgElement.classList.remove('loaded', 'updating');
@@ -102,7 +102,7 @@ function updatePart(partId, color) {
             this.src = imagePathJpeg;
         } else {
             // Both .png and .jpeg failed
-            console.warn(`Image not found: ${partName}_${color}.png or .jpeg`);
+            console.warn(`Image not found: ${partName}${color}.png or .jpeg`);
             this.classList.remove('loading', 'loaded');
             this.style.display = 'none';
             // Show placeholder if no images are visible

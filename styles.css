@@ -82,6 +82,18 @@ h1 {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
+.controls-heading {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #667eea;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
 .controls-panel:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
@@ -334,7 +346,6 @@ h1 {
 }
 
 #handle {
-    z-index: 4;
     top: 22%;
     left: 37.8%;
     width: 18%;
