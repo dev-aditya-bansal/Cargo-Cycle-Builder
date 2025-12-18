@@ -23,22 +23,290 @@ const partDisplayNames = {
 // Track if any image has successfully loaded
 let hasLoadedImage = false;
 
+// Currently selected part name
+let currentPartName = '';
+
+// Part options mapping - each part has 2 options (1 and 2)
+const partOptions = {
+    'frame': ['Frame 1', 'Frame 2'],
+    'handle': ['Handle 1', 'Handle 2'],
+    'frontWheel': ['Wheel 1', 'Wheel 2'],
+    'backWheel': ['Wheel 1', 'Wheel 2'],
+    'cargoBox': ['Cargo Box 1', 'Cargo Box 2'],
+    'seat': ['Seat 1', 'Seat 2'],
+    'pedal': ['Pedal 1', 'Pedal 2']
+};
+
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
     initializeAnimations();
     setupSelectListeners();
+    initializeCustomDropdowns();
 });
+
+// Initialize custom dropdowns
+function initializeCustomDropdowns() {
+    // Initialize part name dropdown
+    const partNameCustom = document.getElementById('partNameSelectCustom');
+    const partNameSelect = document.getElementById('partNameSelect');
+    
+    if (partNameCustom) {
+        setupCustomDropdown(partNameCustom, partNameSelect, handlePartNameChange);
+    }
+    
+    // Initialize part option dropdown
+    const partOptionCustom = document.getElementById('partOptionSelectCustom');
+    const partOptionSelect = document.getElementById('partOptionSelect');
+    
+    if (partOptionCustom) {
+        setupCustomDropdown(partOptionCustom, partOptionSelect, handlePartOptionChange);
+    }
+    
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.custom-select')) {
+            document.querySelectorAll('.custom-select').forEach(dropdown => {
+                dropdown.classList.remove('active');
+                dropdown.style.zIndex = '';
+                // Remove active class from parent
+                const menuControlGroup = dropdown.closest('.menu-control-group');
+                if (menuControlGroup) {
+                    menuControlGroup.classList.remove('has-active-dropdown');
+                }
+            });
+        }
+    });
+}
+
+// Setup a custom dropdown
+function setupCustomDropdown(customSelect, hiddenSelect, onChangeCallback) {
+    const trigger = customSelect.querySelector('.custom-select-trigger');
+    const optionsContainer = customSelect.querySelector('.custom-select-options');
+    const valueSpan = trigger.querySelector('.custom-select-value');
+    
+    // Remove existing event listeners by cloning (clean slate)
+    const newTrigger = trigger.cloneNode(true);
+    trigger.parentNode.replaceChild(newTrigger, trigger);
+    const newValueSpan = newTrigger.querySelector('.custom-select-value');
+    
+    // Toggle dropdown on trigger click
+    newTrigger.addEventListener('click', function(e) {
+        if (newTrigger.classList.contains('disabled')) return;
+        
+        e.stopPropagation();
+        const isActive = customSelect.classList.contains('active');
+        
+        // Close all other dropdowns first
+        document.querySelectorAll('.custom-select').forEach(dd => {
+            if (dd !== customSelect) {
+                dd.classList.remove('active');
+                dd.style.zIndex = '';
+                // Remove active class from parent
+                const menuControlGroup = dd.closest('.menu-control-group');
+                if (menuControlGroup) {
+                    menuControlGroup.classList.remove('has-active-dropdown');
+                }
+            }
+        });
+        
+        // Toggle this dropdown
+        if (!isActive) {
+            // Set very high z-index when opening
+            customSelect.style.zIndex = '1000000';
+            customSelect.classList.add('active');
+            // Add class to parent menu-control-group
+            const menuControlGroup = customSelect.closest('.menu-control-group');
+            if (menuControlGroup) {
+                menuControlGroup.classList.add('has-active-dropdown');
+            }
+        } else {
+            customSelect.style.zIndex = '';
+            customSelect.classList.remove('active');
+            // Remove class from parent menu-control-group
+            const menuControlGroup = customSelect.closest('.menu-control-group');
+            if (menuControlGroup) {
+                menuControlGroup.classList.remove('has-active-dropdown');
+            }
+        }
+    });
+    
+    // Handle option selection - use event delegation
+    optionsContainer.addEventListener('click', function(e) {
+        const option = e.target.closest('.custom-select-option');
+        if (!option) return;
+        
+        e.stopPropagation();
+        const value = option.getAttribute('data-value');
+        const text = option.textContent;
+        
+        // Update display
+        newValueSpan.textContent = text;
+        
+        // Update hidden select
+        hiddenSelect.value = value;
+        
+        // Update selected state
+        optionsContainer.querySelectorAll('.custom-select-option').forEach(opt => {
+            opt.classList.remove('selected');
+        });
+        option.classList.add('selected');
+        
+        // Close dropdown
+        customSelect.classList.remove('active');
+        customSelect.style.zIndex = '';
+        // Remove active class from parent
+        const menuControlGroup = customSelect.closest('.menu-control-group');
+        if (menuControlGroup) {
+            menuControlGroup.classList.remove('has-active-dropdown');
+        }
+        
+        // Trigger change event on hidden select
+        const changeEvent = new Event('change', { bubbles: true });
+        hiddenSelect.dispatchEvent(changeEvent);
+        
+        // Call the callback if provided
+        if (onChangeCallback) {
+            onChangeCallback();
+        }
+    });
+    
+    // Sync with hidden select changes
+    const syncSelect = function() {
+        const selectedValue = hiddenSelect.value;
+        const options = optionsContainer.querySelectorAll('.custom-select-option');
+        const selectedOption = Array.from(options).find(opt => opt.getAttribute('data-value') === selectedValue);
+        
+        if (selectedOption) {
+            newValueSpan.textContent = selectedOption.textContent;
+            options.forEach(opt => opt.classList.remove('selected'));
+            selectedOption.classList.add('selected');
+        } else if (selectedValue === '') {
+            // Reset to placeholder if value is empty
+            const placeholder = customSelect.id === 'partNameSelectCustom' ? 'Select Part Name' : 'Select Part Option';
+            newValueSpan.textContent = placeholder;
+            options.forEach(opt => opt.classList.remove('selected'));
+        }
+    };
+    
+    hiddenSelect.addEventListener('change', syncSelect);
+    
+    // Handle disabled state
+    if (hiddenSelect.disabled) {
+        newTrigger.classList.add('disabled');
+    } else {
+        newTrigger.classList.remove('disabled');
+    }
+    
+    // Initial sync
+    syncSelect();
+}
+
+// Handle part name selection
+function handlePartNameChange() {
+    const partNameSelect = document.getElementById('partNameSelect');
+    const partOptionSelect = document.getElementById('partOptionSelect');
+    const partOptionCustom = document.getElementById('partOptionSelectCustom');
+    const selectedPartName = partNameSelect.value;
+    
+    // Reset part option dropdown
+    partOptionSelect.innerHTML = '<option value=""></option>';
+    partOptionSelect.value = '';
+    partOptionSelect.disabled = true;
+    
+    // Update custom dropdown
+    if (partOptionCustom) {
+        const optionsContainer = partOptionCustom.querySelector('.custom-select-options');
+        const trigger = partOptionCustom.querySelector('.custom-select-trigger');
+        const valueSpan = trigger.querySelector('.custom-select-value');
+        
+        optionsContainer.innerHTML = '';
+        trigger.classList.add('disabled');
+        valueSpan.textContent = 'Select Part Name First';
+    }
+    
+    if (selectedPartName && partOptions[selectedPartName]) {
+        // Enable the part option dropdown
+        partOptionSelect.disabled = false;
+        currentPartName = selectedPartName;
+        
+        // Populate options in hidden select
+        partOptions[selectedPartName].forEach((option, index) => {
+            const optionElement = document.createElement('option');
+            optionElement.value = (index + 1).toString(); // 1 or 2
+            optionElement.textContent = option;
+            partOptionSelect.appendChild(optionElement);
+        });
+        
+        // Populate options in custom dropdown
+        if (partOptionCustom) {
+            const optionsContainer = partOptionCustom.querySelector('.custom-select-options');
+            
+            optionsContainer.innerHTML = '';
+            
+            partOptions[selectedPartName].forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'custom-select-option';
+                optionDiv.setAttribute('data-value', (index + 1).toString());
+                optionDiv.textContent = option;
+                optionsContainer.appendChild(optionDiv);
+            });
+            
+            // Re-initialize the custom dropdown options
+            setupCustomDropdown(partOptionCustom, partOptionSelect, handlePartOptionChange);
+            
+            // Update trigger after re-initialization
+            const trigger = partOptionCustom.querySelector('.custom-select-trigger');
+            const valueSpan = trigger.querySelector('.custom-select-value');
+            trigger.classList.remove('disabled');
+            valueSpan.textContent = 'Select Part Option';
+        }
+        
+        // Add animation to menu control group
+        const menuControlGroup = partNameSelect.closest('.menu-control-group');
+        if (menuControlGroup) {
+            menuControlGroup.classList.add('active');
+            setTimeout(() => menuControlGroup.classList.remove('active'), 500);
+        }
+    } else {
+        currentPartName = '';
+    }
+}
+
+// Handle part option selection
+function handlePartOptionChange() {
+    const partOptionSelect = document.getElementById('partOptionSelect');
+    const selectedOption = partOptionSelect.value;
+    
+    if (currentPartName && selectedOption) {
+        // Update the part with the selected option
+        updatePart(currentPartName, selectedOption);
+        
+        // Add animation to menu control group
+        const menuControlGroup = partOptionSelect.closest('.menu-control-group');
+        if (menuControlGroup) {
+            menuControlGroup.classList.add('active');
+            setTimeout(() => menuControlGroup.classList.remove('active'), 500);
+        }
+    }
+}
 
 // Function to update part image based on selection
 function updatePart(partId, color) {
     const imgElement = document.getElementById(partId);
     const placeholderText = document.querySelector('.placeholder-text');
     const controlGroup = document.querySelector(`#${partId}Color`)?.closest('.control-group');
+    const menuControlGroup = document.querySelector('.menu-control-group');
     
     // Add active class to control group for animation
     if (controlGroup) {
         controlGroup.classList.add('active');
         setTimeout(() => controlGroup.classList.remove('active'), 500);
+    }
+    
+    // Add animation to menu control group if exists
+    if (menuControlGroup) {
+        menuControlGroup.classList.add('active');
+        setTimeout(() => menuControlGroup.classList.remove('active'), 500);
     }
     
     if (!color || color === '') {
@@ -165,6 +433,12 @@ function initializeAnimations() {
     controlGroups.forEach((group, index) => {
         group.style.animationDelay = `${index * 0.1}s`;
     });
+    
+    // Add stagger animation to menu control groups
+    const menuControlGroups = document.querySelectorAll('.menu-control-group');
+    menuControlGroups.forEach((group, index) => {
+        group.style.animationDelay = `${index * 0.1}s`;
+    });
 }
 
 // Setup select listeners for better interactivity
@@ -174,21 +448,36 @@ function setupSelectListeners() {
         select.addEventListener('change', function() {
             // Add ripple effect
             const controlGroup = this.closest('.control-group');
+            const menuControlGroup = this.closest('.menu-control-group');
+            
             if (controlGroup) {
                 controlGroup.style.transform = 'scale(0.98)';
                 setTimeout(() => {
                     controlGroup.style.transform = '';
                 }, 200);
             }
+            
+            if (menuControlGroup) {
+                menuControlGroup.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    menuControlGroup.style.transform = '';
+                }, 200);
+            }
         });
         
         // Add focus animation
         select.addEventListener('focus', function() {
-            this.parentElement.style.transform = 'translateX(5px)';
+            const parent = this.parentElement;
+            if (parent) {
+                parent.style.transform = 'translateX(5px)';
+            }
         });
         
         select.addEventListener('blur', function() {
-            this.parentElement.style.transform = '';
+            const parent = this.parentElement;
+            if (parent) {
+                parent.style.transform = '';
+            }
         });
     });
 }

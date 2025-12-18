@@ -31,6 +31,8 @@ body {
     padding: 30px;
     animation: slideIn 0.8s ease-out;
     transform-origin: center;
+    position: relative;
+    overflow: visible; /* Allow dropdowns to overflow container */
 }
 
 @keyframes slideIn {
@@ -68,10 +70,12 @@ h1 {
 
 .builder-wrapper {
     display: flex;
+    flex-direction: row;
     gap: 40px;
     align-items: flex-start;
 }
 
+/* Desktop Side Panel Menu */
 .controls-panel {
     flex: 0 0 300px;
     background: #f8f9fa;
@@ -97,6 +101,347 @@ h1 {
 .controls-panel:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Mobile Menu Section Styles */
+.menu-section {
+    background: #f8f9fa;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    animation: fadeInUp 0.8s ease-out 0.4s both;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-top: 20px;
+    display: none; /* Hidden by default, shown on mobile */
+    position: relative;
+    z-index: 1;
+    overflow: visible; /* Allow dropdowns to overflow */
+}
+
+.menu-section:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.menu-heading {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #667eea;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.menu-controls {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+    overflow: visible; /* Allow dropdowns to overflow */
+}
+
+.menu-control-group {
+    flex: 1;
+    min-width: 250px;
+    max-width: 400px;
+    width: 100%;
+    animation: fadeInUp 0.6s ease-out both;
+    animation-delay: calc(var(--delay, 0) * 0.1s);
+    position: relative;
+    box-sizing: border-box;
+    z-index: auto; /* Allow child z-index to work */
+    overflow: visible; /* Allow dropdowns to overflow */
+}
+
+/* Custom Dropdown Styles */
+.custom-select-wrapper {
+    position: relative;
+    width: 100%;
+    z-index: auto;
+    overflow: visible;
+}
+
+.custom-select {
+    position: relative;
+    width: 100%;
+    z-index: 1;
+}
+
+.custom-select-trigger {
+    width: 100%;
+    padding: 12px 40px 12px 12px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    min-height: 44px;
+    position: relative;
+    z-index: 1;
+}
+
+.custom-select-trigger:hover:not(.disabled) {
+    border-color: #667eea;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
+}
+
+.custom-select-trigger.disabled {
+    background: #e9ecef;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.custom-select-trigger.active {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.custom-select.active {
+    z-index: 1000000 !important;
+    position: relative;
+}
+
+.custom-select.active .custom-select-options {
+    max-height: 300px;
+    opacity: 1;
+    border-color: #667eea;
+    overflow-y: auto;
+    pointer-events: auto; /* Enable when open */
+    z-index: 1000000 !important;
+}
+
+/* Ensure inactive dropdowns stay below active ones */
+.menu-control-group {
+    z-index: 1;
+}
+
+.menu-control-group.has-active-dropdown {
+    z-index: 1000000 !important;
+}
+
+
+.custom-select-value {
+    flex: 1;
+    text-align: left;
+    color: #333;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.custom-select-arrow {
+    color: #667eea;
+    font-size: 12px;
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+    margin-left: 8px;
+}
+
+.custom-select.active .custom-select-arrow {
+    transform: rotate(180deg);
+}
+
+.custom-select-options {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    width: 100%;
+    max-height: 0;
+    overflow: hidden;
+    overflow-y: auto;
+    background: white;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    z-index: 1000000 !important;
+    opacity: 0;
+    transition: max-height 0.3s ease, opacity 0.3s ease, border-color 0.3s ease;
+    box-sizing: border-box;
+    pointer-events: none; /* Disable when closed */
+}
+
+.custom-select-option {
+    padding: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    font-size: 16px;
+    color: #333;
+    border-bottom: 1px solid #f0f0f0;
+    box-sizing: border-box;
+}
+
+.custom-select-option:last-child {
+    border-bottom: none;
+}
+
+.custom-select-option:hover {
+    background-color: #f8f9fa;
+}
+
+.custom-select-option.selected {
+    background-color: #667eea;
+    color: white;
+}
+
+.custom-select-option.selected:hover {
+    background-color: #5568d3;
+}
+
+.menu-control-group:nth-child(1) { --delay: 1; }
+.menu-control-group:nth-child(2) { --delay: 2; }
+
+.menu-control-group label {
+    display: block;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 8px;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.menu-control-group select {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    padding: 12px 40px 12px 12px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23667eea' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 12px;
+    text-align: left;
+    line-height: 1.5;
+    box-sizing: border-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    /* Force the select to respect container width */
+    margin: 0;
+}
+
+/* Constrain dropdown list width on mobile devices */
+@media (max-width: 968px) {
+    .menu-control-group {
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    .menu-control-group select {
+        width: 100% !important;
+        max-width: 100% !important;
+        /* Force the select to be exactly the container width */
+        box-sizing: border-box !important;
+    }
+
+    .select-wrapper {
+        width: 100%;
+        max-width: 100%;
+        overflow: visible;
+        /* Create a clipping mask effect */
+        clip-path: inset(0);
+    }
+
+    /* Try to visually constrain dropdown appearance */
+    .select-wrapper::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        pointer-events: none;
+        border: 2px solid transparent;
+        border-radius: 8px;
+        z-index: -1;
+    }
+    
+    /* Custom dropdown mobile styles */
+    .custom-select-wrapper {
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    .custom-select-options {
+        width: 100% !important;
+        left: 0 !important;
+        right: auto !important;
+    }
+}
+
+.menu-control-group select option {
+    padding: 10px 12px;
+    font-size: 16px;
+    line-height: 1.5;
+    background: white;
+    color: #333;
+    border: none;
+    min-height: 40px;
+    /* Note: Native select dropdown width is controlled by browser,
+       but we can try to influence it with these properties */
+    max-width: 100%;
+    white-space: normal;
+    word-wrap: break-word;
+}
+
+/* Improve dropdown rendering performance */
+.menu-control-group select,
+.control-group select {
+    will-change: transform, box-shadow;
+    backface-visibility: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Smooth dropdown opening */
+.menu-control-group select:focus,
+.control-group select:focus {
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.menu-control-group select:hover:not(:disabled) {
+    border-color: #667eea;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
+}
+
+.menu-control-group select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.menu-control-group select:active {
+    transform: scale(0.98);
+}
+
+.menu-control-group select:disabled {
+    background: #e9ecef;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.menu-control-group.active {
+    animation: selectPulse 0.5s ease;
 }
 
 @keyframes fadeInLeft {
@@ -145,33 +490,66 @@ h1 {
     letter-spacing: 0.5px;
 }
 
+.control-group {
+    position: relative;
+}
+
 .control-group select {
     width: 100%;
-    padding: 12px;
+    max-width: 100%;
+    min-width: 0;
+    padding: 12px 40px 12px 12px;
     border: 2px solid #ddd;
     border-radius: 8px;
     font-size: 16px;
     background: white;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23667eea' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 12px;
+    text-align: left;
+    line-height: 1.5;
+    box-sizing: border-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* Ensure select doesn't expand beyond container */
+    display: block;
+}
+
+.control-group select option {
+    padding: 10px 12px;
+    font-size: 16px;
+    line-height: 1.5;
+    background: white;
+    color: #333;
+    border: none;
+    min-height: 40px;
+    /* Note: Native select dropdown width is controlled by browser,
+       but we can try to influence it with these properties */
+    max-width: 100%;
+    white-space: normal;
+    word-wrap: break-word;
 }
 
 .control-group select:hover {
     border-color: #667eea;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
 }
 
 .control-group select:focus {
     outline: none;
     border-color: #667eea;
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-    transform: translateY(-2px);
 }
 
 .control-group select:active {
-    transform: translateY(0);
+    transform: scale(0.98);
 }
 
 .control-group.active {
@@ -454,23 +832,66 @@ h1 {
     }
 }
 
+/* Mobile Responsive Styles */
 @media (max-width: 968px) {
+    .container {
+        padding: 15px;
+    }
+    
+    h1 {
+        font-size: 1.8em;
+        margin-bottom: 20px;
+    }
+    
+    h1 img {
+        width: 30px;
+        height: 30px;
+    }
+    
     .builder-wrapper {
         flex-direction: column;
+        gap: 20px;
     }
-
-    .controls-panel {
-        width: 100%;
+    
+    /* Hide desktop side panel on mobile */
+    .desktop-menu {
+        display: none !important;
+    }
+    
+    /* Show mobile menu below on mobile */
+    .mobile-menu {
+        display: block !important;
     }
     
     .preview-area {
-        min-height: 500px;
+        min-height: 400px;
+        padding: 15px;
+        width: 100%;
+    }
+    
+    .menu-section {
+        padding: 20px;
+        margin-top: 15px;
+    }
+    
+    .menu-heading {
+        font-size: 1.2em;
+        margin-bottom: 15px;
+    }
+    
+    .menu-controls {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .menu-control-group {
+        min-width: 100%;
+        max-width: 100%;
     }
     
     /* Ensure wheels maintain position relative to frame on mobile */
     #frontWheel,
     #backWheel {
-        /* Maintain same proportional positioning */
         transform-origin: center center;
     }
     
@@ -493,6 +914,104 @@ h1 {
             transform: translateY(0);
             opacity: 1;
         }
+    }
+}
+
+@media (max-width: 576px) {
+    body {
+        padding: 10px;
+    }
+    
+    .container {
+        padding: 15px;
+        border-radius: 15px;
+    }
+    
+    h1 {
+        font-size: 1.5em;
+        margin-bottom: 15px;
+    }
+    
+    h1 img {
+        width: 25px;
+        height: 25px;
+        margin-right: 5px;
+    }
+    
+    .preview-area {
+        min-height: 300px;
+        padding: 10px;
+    }
+    
+    .bike-container {
+        max-height: 70vh;
+    }
+    
+    .menu-section {
+        padding: 15px;
+    }
+    
+    .menu-heading {
+        font-size: 1em;
+        margin-bottom: 12px;
+        padding-bottom: 10px;
+    }
+    
+    .menu-control-group label {
+        font-size: 12px;
+        margin-bottom: 6px;
+    }
+    
+    .menu-control-group select {
+        padding: 10px 35px 10px 10px;
+        font-size: 14px;
+        background-position: right 10px center;
+        background-size: 10px;
+    }
+    
+    .menu-control-group select option {
+        padding: 8px 10px;
+        font-size: 14px;
+    }
+    
+    .control-group select {
+        padding: 10px 35px 10px 10px;
+        font-size: 14px;
+        background-position: right 10px center;
+        background-size: 10px;
+    }
+    
+    .control-group select option {
+        padding: 8px 10px;
+        font-size: 14px;
+    }
+    
+    /* Custom dropdown mobile styles */
+    .custom-select-trigger {
+        padding: 10px 35px 10px 10px;
+        font-size: 14px;
+        min-height: 40px;
+    }
+    
+    .custom-select-option {
+        padding: 10px;
+        font-size: 14px;
+    }
+    
+    .placeholder-text {
+        font-size: 14px;
+        padding: 0 10px;
+    }
+}
+
+/* Ensure desktop menu is visible on larger screens */
+@media (min-width: 969px) {
+    .desktop-menu {
+        display: block !important;
+    }
+    
+    .mobile-menu {
+        display: none !important;
     }
 }
 

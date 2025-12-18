@@ -27,7 +27,8 @@
                 </div>
             </div>
 
-            <div class="controls-panel">
+            <!-- Desktop Side Panel Menu -->
+            <div class="controls-panel desktop-menu">
                 <h2 class="controls-heading">Menu</h2>
                 <div class="control-group">
                     <label for="frameColor">Frame</label>
@@ -90,6 +91,62 @@
                         <option value="1">Pedal 1</option>
                         <option value="2">Pedal 2</option>
                     </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Section Below Preview -->
+        <div class="menu-section mobile-menu">
+            <h2 class="menu-heading">Customize Your Bike</h2>
+            <div class="menu-controls">
+                <div class="menu-control-group">
+                    <label for="partNameSelect">List of Part Names</label>
+                    <div class="custom-select-wrapper">
+                        <div class="custom-select" id="partNameSelectCustom">
+                            <div class="custom-select-trigger">
+                                <span class="custom-select-value">Select Part Name</span>
+                                <span class="custom-select-arrow">▼</span>
+                            </div>
+                            <div class="custom-select-options">
+                                <div class="custom-select-option" data-value="frame">Frame</div>
+                                <div class="custom-select-option" data-value="handle">Handle</div>
+                                <div class="custom-select-option" data-value="frontWheel">Front Wheel</div>
+                                <div class="custom-select-option" data-value="backWheel">Back Wheel</div>
+                                <div class="custom-select-option" data-value="cargoBox">Cargo Box</div>
+                                <div class="custom-select-option" data-value="seat">Seat</div>
+                                <div class="custom-select-option" data-value="pedal">Pedal</div>
+                            </div>
+                        </div>
+                        <!-- Hidden select for form compatibility -->
+                        <select id="partNameSelect" style="display: none;">
+                            <option value="">Select Part Name</option>
+                            <option value="frame">Frame</option>
+                            <option value="handle">Handle</option>
+                            <option value="frontWheel">Front Wheel</option>
+                            <option value="backWheel">Back Wheel</option>
+                            <option value="cargoBox">Cargo Box</option>
+                            <option value="seat">Seat</option>
+                            <option value="pedal">Pedal</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="menu-control-group">
+                    <label for="partOptionSelect">List of Part Option</label>
+                    <div class="custom-select-wrapper">
+                        <div class="custom-select" id="partOptionSelectCustom">
+                            <div class="custom-select-trigger disabled">
+                                <span class="custom-select-value">Select Part Name First</span>
+                                <span class="custom-select-arrow">▼</span>
+                            </div>
+                            <div class="custom-select-options">
+                            </div>
+                        </div>
+                        <!-- Hidden select for form compatibility -->
+                        <select id="partOptionSelect" style="display: none;" disabled>
+                            <option value="">Select Part Name First</option>
+                        </select>
+                    </div>
                 </div>
             </div>
         </div>
