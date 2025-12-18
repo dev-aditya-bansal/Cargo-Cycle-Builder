@@ -182,7 +182,14 @@ function setupCustomDropdown(customSelect, hiddenSelect, onChangeCallback) {
             selectedOption.classList.add('selected');
         } else if (selectedValue === '') {
             // Reset to placeholder if value is empty
-            const placeholder = customSelect.id === 'partNameSelectCustom' ? 'Select Part Name' : 'Select Part Option';
+            let placeholder;
+            if (customSelect.id === 'partNameSelectCustom') {
+                placeholder = 'Select Parts';
+            } else if (customSelect.id === 'partOptionSelectCustom' && currentPartName) {
+                placeholder = `Select ${partDisplayNames[currentPartName]}`;
+            } else {
+                placeholder = 'Select Part Option';
+            }
             newValueSpan.textContent = placeholder;
             options.forEach(opt => opt.classList.remove('selected'));
         }
@@ -256,9 +263,7 @@ function handlePartNameChange() {
             
             // Update trigger after re-initialization
             const trigger = partOptionCustom.querySelector('.custom-select-trigger');
-            const valueSpan = trigger.querySelector('.custom-select-value');
             trigger.classList.remove('disabled');
-            valueSpan.textContent = 'Select Part Option';
         }
         
         // Add animation to menu control group
